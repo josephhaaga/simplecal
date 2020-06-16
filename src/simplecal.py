@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import datetime
 import itertools
-import typing
+from typing import List, Union
 
 
 @dataclass
@@ -26,7 +26,7 @@ NINE_PM = datetime.datetime.combine(datetime.datetime.today(), datetime.time(21,
 
 
 class Calendar:
-    events: typing.List[Event] = []
+    events: List[Event] = []
 
     def add_event(self, event: Event) -> None:
         self.events += [event]
@@ -34,17 +34,18 @@ class Calendar:
     def delete_event(self, event: Event) -> None:
         self.events = [e for e in self.events if e != event]
 
-    def get_event_at(self, time: datetime.time) -> typing.Union[Event, bool]:
+    def get_event_at(self, time: datetime.time) -> List[Event]:
+        events_at_that_time = []
         dt = datetime.datetime.combine(datetime.datetime.today(), time)
         for event in self.get_events():
             if event.contains_time(time):
-                return event
-        return False
+                events_at_that_time += [event]
+        return events_at_that_time
 
-    def get_events(self) -> typing.List:
+    def get_events(self) -> List:
         return sorted(self.events, key=lambda e: e.start)
 
-    def get_free_time_blocks(self) -> typing.List:
+    def get_free_time_blocks(self) -> List:
         free_time_blocks = []
         events = self.get_events()
         a, b = itertools.tee(events)

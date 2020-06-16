@@ -17,6 +17,7 @@ def main():
 if __name__ == "__main__":
     cal = main()
     free_time = cal.get_free_time_blocks()
-    print(f"At 9:16AM, I have the following event")
-    first_meeting = cal.get_event_at(time(9, 16))
-    print(first_meeting)
+    events_at_9_16 = cal.get_event_at(time(9, 16))
+    print(f"At 9:16AM, I have {len(events_at_9_16)} events")
+    for event in events_at_9_16:
+        print(event)
