@@ -14,9 +14,8 @@ class Event:
     def end(self) -> datetime.datetime:
         return self.start + self.duration
 
-    def contains_time(self, time: datetime.time) -> bool:
-        t = datetime.datetime.combine(self.start, time)
-        if t >= self.start and t <= self.end:
+    def contains_time(self, time: datetime.datetime) -> bool:
+        if time >= self.start and time <= self.end:
             return True
         return False
 
