@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 import simplecal
 
@@ -15,4 +15,7 @@ def main():
 if __name__ == '__main__':
     cal = main()
     free_time = cal.get_free_time_blocks()
+    print(f"At 9:16AM, I have the following event")
+    first_meeting = cal.get_event_at(time(9, 16))
+    print(first_meeting)
 
