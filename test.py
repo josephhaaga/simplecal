@@ -14,3 +14,5 @@ def main():
 
 if __name__ == '__main__':
     cal = main()
+    free_time = cal.get_free_time_blocks()
+
