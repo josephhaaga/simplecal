@@ -5,8 +5,12 @@ from datetime import datetime, timedelta
 @dataclass
 class Event:
     description: str
-    start_time: datetime
+    start: datetime
     duration: timedelta
+
+    @property
+    def end(self):
+        return self.start + self.duration
 
 class Calendar:
     events = []
