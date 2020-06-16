@@ -43,5 +43,8 @@ class Calendar:
             free_time_blocks += [Event("free time", start, duration)]
         return free_time_blocks
 
-
+    def calculate_minutes_of_free_time(self):
+        free_time_blocks = self.get_free_time_blocks()
+        durations = [x.duration.total_seconds() for x in free_time_blocks]
+        return sum(durations) // 60
 
