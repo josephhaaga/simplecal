@@ -28,12 +28,6 @@ NINE_PM = datetime.datetime.combine(datetime.datetime.today(), datetime.time(21,
 class Calendar:
     events: typing.List[Event] = []
 
-    def __init__(self):
-        day_start = Event("day start", NINE_AM, datetime.timedelta(microseconds=0))
-        day_end = Event("day end", NINE_PM, datetime.timedelta(microseconds=0))
-        self.add_event(day_start)
-        self.add_event(day_end)
-
     def add_event(self, event: Event) -> None:
         self.events += [event]
 
@@ -52,7 +46,8 @@ class Calendar:
 
     def get_free_time_blocks(self) -> typing.List:
         free_time_blocks = []
-        a, b = itertools.tee(self.get_events())
+        events = self.get_events()
+        a, b = itertools.tee(events)
         next(b, None)
         for i, j in zip(a, b):
             duration = j.start - i.end
