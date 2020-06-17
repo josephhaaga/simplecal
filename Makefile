@@ -2,8 +2,7 @@ t:
 	python3 -m pytest
 
 p:
-	black *.py
-	mypy *.py
+	pre-commit run --all-files
 
 build:
 	python3 setup.py sdist bdist_wheel

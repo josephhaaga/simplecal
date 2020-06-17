@@ -5,32 +5,51 @@ from context import simplecal
 
 
 class TestEvent:
-    @pytest.mark.parametrize("start_time,duration,time_to_test,expected", [
-        (datetime.now(), timedelta(seconds=50), datetime.now(), True),
-        (datetime.now() - timedelta(days=1), timedelta(seconds=50), datetime.now(), False),
-    ])
-    def test_contains_time(self, start_time: datetime.time, duration: timedelta, time_to_test: time, expected: bool):
+    @pytest.mark.parametrize(
+        "start_time,duration,time_to_test,expected",
+        [
+            (datetime.now(), timedelta(seconds=50), datetime.now(), True),
+            (
+                datetime.now() - timedelta(days=1),
+                timedelta(seconds=50),
+                datetime.now(),
+                False,
+            ),
+        ],
+    )
+    def test_contains_time(
+        self,
+        start_time: datetime,
+        duration: timedelta,
+        time_to_test: datetime,
+        expected: bool,
+    ):
         e = simplecal.Event("Sample event", start_time, duration)
         assert e.contains_time(time_to_test) == expected
+
 
 @pytest.fixture(scope="module")
 def epoch():
     return datetime(1970, 1, 1, 0, 0, 0)
+
 
 @pytest.fixture(scope="module")
 def event(epoch):
     one_minute = timedelta(seconds=60)
     return simplecal.Event("Sample Event", epoch, one_minute)
 
+
 @pytest.fixture(scope="module")
 def empty_calendar():
     return simplecal.Calendar()
+
 
 @pytest.fixture(scope="function")
 def nonempty_calendar(event):
     cal = simplecal.Calendar()
     cal.events = [event]
     return cal
+
 
 class TestCalendar:
     def test_add_event(self, empty_calendar, event):
