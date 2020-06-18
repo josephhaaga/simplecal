@@ -4,18 +4,26 @@ import itertools
 from typing import List, Union
 
 
+def get_arithmetic_time(t: datetime.time) -> datetime.datetime:
+    """Returns a datetime object for performing time arithmetic."""
+    return datetime.datetime.combine(datetime.datetime.now(), t)
+
+
 @dataclass
 class Event:
     description: str
-    start: datetime.datetime
+    start: datetime.time
     duration: datetime.timedelta
 
     @property
-    def end(self) -> datetime.datetime:
-        return self.start + self.duration
+    def end(self) -> datetime.time:
+        return (get_arithmetic_time(self.start) + self.duration).time()
 
-    def contains_time(self, time: datetime.datetime) -> bool:
-        if time >= self.start and time <= self.end:
+    def contains_time(self, time: datetime.time) -> bool:
+        t = get_arithmetic_time(time)
+        event_start = get_arithmetic_time(self.start)
+        event_end = get_arithmetic_time(self.end)
+        if t >= event_start and t <= event_end:
             return True
         return False
 
@@ -33,7 +41,7 @@ class Calendar:
     def get_events_at(self, time: datetime.datetime) -> List[Event]:
         events_at_that_time = []
         for event in self.events:
-            if event.contains_time(time):
+            if event.contains_time(time.time()):
                 events_at_that_time += [event]
         return events_at_that_time
 
@@ -45,7 +53,7 @@ class Calendar:
         a, b = itertools.tee(self.events)
         next(b, None)
         for i, j in zip(a, b):
-            duration = j.start - i.end
+            duration = get_arithmetic_time(j.start) - get_arithmetic_time(i.end)
             start = i.end
             free_time_blocks += [Event("free time", start, duration)]
         return free_time_blocks
