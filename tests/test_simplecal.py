@@ -30,7 +30,7 @@ class TestEvent:
 
 @pytest.fixture(scope="module")
 def epoch():
-    return datetime(1970, 1, 1, 0, 0, 0)
+    return datetime.combine(datetime.now(), time(0))
 
 
 @pytest.fixture(scope="module")
@@ -39,7 +39,7 @@ def event(epoch):
     return simplecal.Event("Sample Event", epoch, one_minute)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def empty_calendar():
     return simplecal.Calendar()
 
@@ -64,8 +64,27 @@ class TestCalendar:
         events_at_epoch = nonempty_calendar.get_events_at(epoch + timedelta(seconds=2))
         assert event in events_at_epoch
 
-    def test_free_time_blocks(self):
-        assert True == False
+    def test_get_free_time_blocks_on_empty_calendar(self):
+        ccal = simplecal.Calendar()
+        # cant use empty_calendar fixture due to "deep copy" changes? https://github.com/pytest-dev/pytest-django/issues/601
 
-    def test_calculate_minutes_of_free_time(self):
-        assert True == False
+        # TODO: WHY IS THIS FAILING!!!
+        assert len(ccal.events) == 0
+
+        free_time_blocks = ccal.get_free_time_blocks()
+        assert len(free_time_blocks) == 1
+        assert ccal.get_free_time_blocks() == [
+            simplecal.Event("free time", ccal.day_start, ccal.day_length)
+        ]
+
+    # TODO: @pytest.mark.parametrize("calendar,mins_free_time", [(nonempty_calendar,
+    def test_calculate_minutes_of_free_time(self, nonempty_calendar):
+        cal = nonempty_calendar
+        minutes_of_free_time = cal.calculate_minutes_of_free_time()
+        seconds_spent_in_meetings = sum(
+            [event.duration.total_seconds() for event in cal.events]
+        )
+        total_seconds_in_day = (cal.day_end - cal.day_start).total_seconds()
+        assert (cal.calculate_minutes_of_free_time()) == (
+            (total_seconds_in_day - seconds_spent_in_meetings) // 60
+        )
